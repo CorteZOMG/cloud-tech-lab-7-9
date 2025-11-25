@@ -2,9 +2,12 @@
 
 from typing import List, Optional
 import httpx
+import json
+from redis import asyncio as aioredis
 
 from .config import config
 from .dtos import DriverDTO, MeetingDTO, DriverMeetingDTO
+from redis_client import get_redis
 
 
 class OpenF1Service:
@@ -29,6 +32,17 @@ class OpenF1Service:
         Returns:
             List of DriverDTO objects
         """
+        # Cache key generation
+        cache_key = f"drivers:{session_key}:{driver_number}"
+        redis = get_redis()
+        
+        # Try to get from cache
+        cached_data = await redis.get(cache_key)
+        if cached_data:
+            await redis.close()
+            data = json.loads(cached_data)
+            return [DriverDTO(**item) for item in data]
+
         url = f"{self.base_url}/drivers"
         params = {}
         
@@ -41,6 +55,10 @@ class OpenF1Service:
             response = await client.get(url, params=params)
             response.raise_for_status()
             data = response.json()
+            
+        # Save to cache
+        await redis.set(cache_key, json.dumps(data), ex=config.REDIS_TTL)
+        await redis.close()
             
         return [DriverDTO(**item) for item in data]
     
@@ -60,6 +78,17 @@ class OpenF1Service:
         Returns:
             List of MeetingDTO objects
         """
+        # Cache key generation
+        cache_key = f"meetings:{year}:{country_name}:{meeting_key}"
+        redis = get_redis()
+        
+        # Try to get from cache
+        cached_data = await redis.get(cache_key)
+        if cached_data:
+            await redis.close()
+            data = json.loads(cached_data)
+            return [MeetingDTO(**item) for item in data]
+
         url = f"{self.base_url}/meetings"
         params = {}
         
@@ -74,6 +103,10 @@ class OpenF1Service:
             response = await client.get(url, params=params)
             response.raise_for_status()
             data = response.json()
+            
+        # Save to cache
+        await redis.set(cache_key, json.dumps(data), ex=config.REDIS_TTL)
+        await redis.close()
             
         return [MeetingDTO(**item) for item in data]
     

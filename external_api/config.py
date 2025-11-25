@@ -1,7 +1,8 @@
-"""Configuration dataclass for OpenF1 API with magic numbers."""
-
+import os
 from dataclasses import dataclass
+from dotenv import load_dotenv
 
+load_dotenv()
 
 @dataclass(frozen=True)
 class OpenF1Config:
@@ -20,6 +21,11 @@ class OpenF1Config:
     DEFAULT_YEAR: int = 2023
     MAX_RETRIES: int = 3
     
+    # Database & Redis
+    DATABASE_URL: str = os.getenv("DATABASE_URL", "postgresql+asyncpg://user:pass@localhost/db")
+    REDIS_URL: str = os.getenv("REDIS_URL", "redis://localhost:6379")
+    REDIS_TTL: int = 60
+
     @property
     def api_url(self) -> str:
         """Construct the full API URL."""

@@ -1,27 +1,32 @@
 """FastAPI application entry point."""
 
 from fastapi import FastAPI
-from external_api import router
+from external_api.router import router as f1_router
+from user_router import router as user_router
+from redis_router import router as redis_router
 
 app = FastAPI(
-    title="OpenF1 External API",
-    description="A minimalistic external API module for accessing Formula 1 data from OpenF1",
+    title="Cloud Tech Lab 7-9 & 10-15",
+    description="API for Formula 1 data with PostgreSQL and Redis integration",
     version="1.0.0"
 )
 
-app.include_router(router)
+app.include_router(f1_router)
+app.include_router(user_router)
+app.include_router(redis_router)
 
 
 @app.get("/")
 async def root():
-    """Root endpoint with API information."""
     return {
-        "message": "OpenF1 External API",
+        "message": "Cloud Tech Lab 7-9 & 10-15 API",
         "docs": "/docs",
         "endpoints": {
             "drivers": "/api/f1/drivers",
             "meetings": "/api/f1/meetings",
-            "driver_meetings": "/api/f1/driver-meetings"
+            "driver_meetings": "/api/f1/driver-meetings",
+            "users": "/users",
+            "cache": "/cache"
         }
     }
 
