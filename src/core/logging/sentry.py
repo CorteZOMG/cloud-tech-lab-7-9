@@ -12,7 +12,10 @@ def init_sentry() -> None:
     Initialize Sentry monitoring with integrations.
     """
     if not settings.sentry_dsn:
+        print("SENTRY: No DSN found in settings. Skipping initialization.")
         return
+
+    print(f"SENTRY: Initializing with DSN: {settings.sentry_dsn[:10]}...")
 
     sentry_sdk.init(
         dsn=settings.sentry_dsn,
