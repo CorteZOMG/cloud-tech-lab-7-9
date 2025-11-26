@@ -1,5 +1,6 @@
 """FastAPI application entry point."""
 
+import logging
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
@@ -16,7 +17,13 @@ async def lifespan(app: FastAPI):
     # Initialize Sentry and logging on startup
     init_sentry()
     setup_logging()
+
+    logger = logging.getLogger("src.main")
+    logger.info("Application starting up")
+
     yield
+
+    logger.info("Application shutting down")
 
 
 app = FastAPI(
