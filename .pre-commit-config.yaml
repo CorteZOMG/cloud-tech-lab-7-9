@@ -1,0 +1,42 @@
+repos:
+  # Black formatter
+  - repo: https://github.com/psf/black
+    rev: 23.12.1
+    hooks:
+      - id: black
+        language_version: python3
+
+  # isort for import sorting (auto-fix enabled)
+  - repo: https://github.com/PyCQA/isort
+    rev: 5.13.2
+    hooks:
+      - id: isort
+        args: ["--profile", "black"]
+
+  # Flake8 style checker
+  - repo: https://github.com/PyCQA/flake8
+    rev: 6.1.0
+    hooks:
+      - id: flake8
+        args:
+          - "--exclude=venv,env,migrations"
+
+  # Pytest with coverage (runs only AFTER linters)
+  - repo: local
+    hooks:
+      - id: pytest-with-coverage
+        name: Run pytest with coverage
+        entry: bash -c 'cd /home/cortezomg/college/cloud-tech/lab16-22/cloud-tech-lab-7-9 && ./venv/bin/pytest --cov=src --cov-fail-under=30'
+        language: system
+        pass_filenames: false
+        always_run: true
+
+  # Official pre-commit hooks
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: check-added-large-files
+      - id: check-merge-conflict
+      - id: detect-private-key
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
