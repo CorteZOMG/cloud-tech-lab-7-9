@@ -102,7 +102,27 @@ pytest tests/test_external_api.py
 
 ---
 
-## 🚢 Deployment (Render)
+## � Configuration & Secrets
+
+It is important to know where to put your environment variables:
+
+### 1. GitHub Secrets (For CI/CD)
+Go to **Settings** -> **Secrets and variables** -> **Actions** in your GitHub repository.
+Add these secrets for the deployment pipeline:
+- `RENDER_DEPLOY_HOOK`: The URL from Render to trigger a deploy.
+- `RENDER_HEALTHCHECK_URL`: The public URL of your app (e.g., `https://app.onrender.com/common/healthcheck`).
+
+**Note**: You do **NOT** need `SENTRY_DSN` in GitHub Secrets. The CI tests run with a mock environment (`.test.env`) and do not send data to Sentry.
+
+### 2. Render Environment Variables (For Production)
+Go to **Environment** settings in your Render Dashboard.
+Add these variables for the running application:
+- `SENTRY_DSN`: Your actual Sentry DSN key.
+- `ENVIRONMENT`: Set to `production`.
+
+---
+
+## �🚢 Deployment (Render)
 
 To deploy from the `lab16-22` branch:
 
